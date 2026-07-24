@@ -1,6 +1,7 @@
 # Cloud Agent smoke test
 
-Status: NOT_RUN
+Status: PASSED
+Date: 2026-07-24
 
 When the Cloud Agent runs, please:
 
