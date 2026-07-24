@@ -1,0 +1,37 @@
+# Secrets & credentials
+.env
+.env.*
+!.env.example
+**/credentials*.json
+**/*password*
+**/*secret*
+_pw_login/
+**/.htpasswd
+
+# Large / local artifacts
+*.zip
+*.exe
+*.msi
+*.log
+node_modules/
+vendor/
+dist/
+build/
+.checkpoint.json
+**/.checkpoint.json
+**/carparts-products.csv
+**/test-output/
+
+# OS / IDE
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+.vscode/
+!.cursor/
+
+# Temp / restore
+.cursor-tmp-*
+_pptx_build/
+_pptx_sample/
+_carparts_test/
