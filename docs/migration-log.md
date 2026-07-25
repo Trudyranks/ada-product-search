@@ -103,3 +103,17 @@ Once any of the above is available, agent will (from VPS only):
 | DNS | Unchanged |
 
 **Next:** Agent should open 2FA page, keep session alive, then human pastes the **newest** emailed code immediately.
+
+---
+
+## 2026-07-25T03:30Z — Device code `0707fd` on held session
+
+| Step | Result |
+|------|--------|
+| Session | Held `/twofa/device/` from 03:27:53Z (no refresh / no new login) |
+| Submit | **Once** via held-session control API |
+| Outcome | **FAILED** |
+| Exact error | “Unfortunately your log in attempt failed. You have **3 more tries** until your account will be locked for 15 minutes.” |
+| Retry of same code | Not attempted |
+| Transfer | Not started |
+| DNS | Unchanged |
