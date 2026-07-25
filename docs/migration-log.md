@@ -117,3 +117,23 @@ Once any of the above is available, agent will (from VPS only):
 | Retry of same code | Not attempted |
 | Transfer | Not started |
 | DNS | Unchanged |
+
+---
+
+## 2026-07-25T03:43Z — Device code `314d84` SUCCESS; Phase 2 transfer started
+
+| Step | Result |
+|------|--------|
+| Held session submit `314d84` | **SUCCESS** — logged into Namecheap account (Dashboard / Hosting List) |
+| cPanel SSO `alldrnmk` | **OK** via `cpanellogin/4102348` → `business55.web-hosting.com:2083` |
+| SSH shell | Still `noshell` (cannot enable via UAPI `SSH::set_shell`) |
+| FTP | Created `adapull@alldrivesauto.com` (homedir `/home/alldrnmk`) — **works** |
+| File pull | **RUNNING** on VPS tmux `pull-files`: `lftp mirror` `public_html` → `/var/www/alldrivesauto` (server-to-server) |
+| WP DB (from wp-config) | `alldrnmk_adacom3216895956` / prefix `wp_` |
+| DB pull | Pulled existing `public_html/db/*.sql` (~190MB, contains `wp_` tables; file mtime Jan 28 — may be stale). Fresh dump still needed (cPanel cookie getsqlbackup 401 from VPS IP; PHP mysqldump helper blocked by WP/LiteSpeed). Fullbackup_to_homedir pid started earlier — monitor. |
+| Staging URL | http://162.35.185.121/ (not fully restored yet) |
+| DNS | **Unchanged** |
+
+### Transfer method
+- VPS-side `lftp` FTPS mirror using dedicated FTP account (not user PC)
+- Long-running under `tmux` session `pull-files`
