@@ -1,6 +1,6 @@
 # Cloud Agent brief — full Hostinger migration
 
-**Mission:** Handle the **entire** WordPress/WooCommerce migration of https://alldrivesauto.com from Namecheap shared hosting to the Hostinger VPS, end-to-end, with zero surprise DNS cutover.
+**Mission:** Handle the **entire** WordPress/WooCommerce migration of https://alldrivesauto.com from Namecheap shared hosting to the **InterServer** VPS, end-to-end, with zero surprise DNS cutover.
 
 Cloud Agents do **not** see local Cursor chats. This file is the source of truth.
 
@@ -12,8 +12,8 @@ Cloud Agents do **not** see local Cursor chats. This file is the source of truth
 |------|--------|
 | Live site | https://alldrivesauto.com |
 | Current host | Namecheap shared / cPanel |
-| New host | Hostinger **KVM 4** (~16 GB RAM / **200 GB** disk), US (Boston) |
-| OS | Ubuntu **24.04 or 22.04 Plain OS** (not a 1-click WP app) |
+| New host | **InterServer Premium VPS** (target **8 slices** = ~16 GB RAM / ~320 GB disk), **New Jersey East Coast · USA** |
+| OS | **Ubuntu** plain (no cPanel unless later requested) |
 | Approx data | ~50 GB files + database |
 | Stack | WordPress + WooCommerce (Mobex theme) + existing plugins |
 
@@ -23,9 +23,9 @@ Cloud Agents do **not** see local Cursor chats. This file is the source of truth
 
 ### Human must do (cannot be automated)
 
-1. Finish Hostinger checkout / pay for the VPS  
+1. Finish InterServer checkout / pay for the VPS  
 2. Put these into **Cloud Agent Secrets** (or paste once in the kickoff prompt) — never commit to git:
-   - VPS SSH: host/IP, user, key or password  
+   - VPS SSH: host/IP, user (`root`), password  
    - Namecheap cPanel **or** SFTP + DB export access  
    - Domain DNS login (if not Namecheap)  
    - WP admin URL/user if needed for smoke checks  
@@ -138,7 +138,7 @@ If broken: roll DNS back to Namecheap immediately and report.
 ## Phase 7 — Post-cutover (same agent run or follow-up)
 
 1. Keep Namecheap as fallback ~48–72 hours  
-2. Confirm Hostinger backup enabled  
+2. Confirm Hostinger/InterServer backup options; enable if available  
 3. Optional next (separate prompt unless human says include now): install **Meilisearch** + Woo search integration  
 
 ---
@@ -150,14 +150,14 @@ In this Cursor chat, say:
 ```text
 Let the Cloud Agent handle the entire migration.
 Secrets are in Cloud Agent Secrets (or pasted below).
-Read CLOUD_AGENT_BRIEF.md and execute Phases 0–7.
+Read CLOUD_AGENT_BRIEF.md and execute Phases 0–7 for InterServer.
 Do not change public DNS until I approve Phase 6.
 ```
 
 Or on https://cursor.com/agents with repo `Trudyranks/ada-product-search`:
 
 ```text
-Read CLOUD_AGENT_BRIEF.md. Execute the full Hostinger migration (Phases 0–7).
+Read CLOUD_AGENT_BRIEF.md. Execute the full InterServer migration (Phases 0–7).
 Never change public DNS until I explicitly approve. Log progress in docs/migration-log.md.
 ```
 
@@ -165,13 +165,14 @@ Never change public DNS until I explicitly approve. Log progress in docs/migrati
 
 ## Out of scope unless asked
 
-- Paying Hostinger / Contabo  
+- Paying InterServer / Hostinger / Contabo  
 - Mass product scraping/import during migration  
 - Meilisearch (default: after cutover)  
 - Phone/voice AI  
+- cPanel (not required; use SFTP/SSH)
 
 ---
 
 ## Success definition
 
-Public https://alldrivesauto.com serves from Hostinger VPS with working shop/admin, SSL valid, Namecheap still available for rollback, and migration log committed to this repo.
+Public https://alldrivesauto.com serves from InterServer VPS with working shop/admin, SSL valid, Namecheap still available for rollback, and migration log committed to this repo.
