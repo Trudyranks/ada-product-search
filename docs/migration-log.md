@@ -87,3 +87,19 @@ Once any of the above is available, agent will (from VPS only):
 | Namecheap account login `Trudale1` | Password OK → **Device Verification** again (`/twofa/device/`) — code emailed to `b*********n@g*******m` |
 
 **STOP.** Human verifying on their browser does not grant this Cloud Agent a session. Need a **fresh verification code pasted into chat** (10-minute window) so the agent can complete login, reset cPanel password if needed, and start VPS-side pull. No DNS changes. No transfer started.
+
+---
+
+## 2026-07-25T03:25Z — Device code attempt `c5b29d`
+
+| Step | Result |
+|------|--------|
+| Reach `/twofa/device/` | OK (headed Chrome + Enter submit) |
+| Fill + submit code `c5b29d` once | Submitted to `verifyDeviceCode` |
+| Outcome | **FAILED** — Namecheap: “Unfortunately your log in attempt failed. You have **4 more tries** until your account will be locked for 15 minutes.” |
+| Likely cause | Fresh agent login at submit time triggers `startAuthentication` and emails a **new** code; human’s code was for an earlier session / expired TTL |
+| cPanel/SFTP | Still not accessible |
+| File pull on VPS | **Not started** |
+| DNS | Unchanged |
+
+**Next:** Agent should open 2FA page, keep session alive, then human pastes the **newest** emailed code immediately.
