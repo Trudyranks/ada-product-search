@@ -9,39 +9,42 @@ Cloud Agents do **not** see local Cursor chats. This file is the source of truth
 
 ---
 
-## Current status (2026-07-24) — VPS ordered & registered
+## Current status (2026-07-25) — VPS ready; Phase 1 done
 
 | Item | Value |
 |------|--------|
 | Live site | https://alldrivesauto.com |
 | Current host | Namecheap shared / cPanel (keep live until Phase 6 approved) |
+| Namecheap account user | `Trudale1` (password in Cloud Agent Secrets; may need email 2FA) |
 | New host | **InterServer Premium VPS** — paid & Active |
 | Service ID | **VPS#3516118** |
 | Hostname | `vps3516118` / PTR `vps3516118.trouble-free.net` |
-| Public IP | **162.35.185.121** (confirmed on invoice #47647919 + reverse DNS) |
-| Host node | KVM546 (panel also shows this IP under “HOST SERVER” — guest IP is the same) |
-| Package | KVM Linux VPS Slice (**Ubuntu 8 Slices**) · **$24/mo** · New Jersey East Coast · USA |
+| Public IP | **162.35.185.121** |
+| Package | KVM Linux VPS Slice (**Ubuntu 8 Slices**) · **$24/mo** · NJ USA |
 | Panel | https://my.interserver.net/view_vps?id=3516118 |
-| Account email | bearasspain@gmail.com |
-| Call-in PIN | 623313 (for InterServer phone support) |
-| Console OS | Ubuntu **24.04 LTS** at tty1 login (noVNC available via panel “View Desktop”) |
-| Panel OS label | Was shown as `ubuntu26` / template options include `ubuntu24`, `ubuntu26`, desktop |
-| cPanel | **Not** installed (use SSH/SFTP). Optional later (~$23+/mo; marked Not Supported on some SKUs) |
+| VPS OS | **Ubuntu 24.04.4 LTS** (reinstalled clean) |
+| Phase 1 | **DONE** — Nginx, PHP 8.3-FPM, MariaDB, UFW, Fail2ban, WP-CLI, Composer; web root `/var/www/alldrivesauto`; http://162.35.185.121/ returns 200 |
 | Approx data | ~50 GB files + database |
 | Stack | WordPress + WooCommerce (Mobex theme) + existing plugins |
 
-### SSH / credentials status (important)
+### CRITICAL — transfer must NOT use the human’s PC
 
-- SSH **port 22 is open** on `162.35.185.121`.
-- Banner: `OpenSSH_10.2p1 Ubuntu-2ubuntu3.5`.
-- Auth methods: `publickey,password`.
-- A panel **Change Root Password** was queued successfully (“allow up to 2 minutes”), but SSH still returned **Permission denied (password)** afterward.
-- **Do not assume** the local `.secrets` password works until Phase 0 verifies SSH.
-- Recovery if SSH fails at kickoff:
-  1. Use InterServer panel → **Change Root Password** again, wait 2+ minutes, retry SSH as `root`.
-  2. Or **Reinstall OS** → choose **Ubuntu 24.04** (`ubuntu24`, **not** Desktop) → set a known root password → confirm with InterServer **account** password → wait for reinstall → SSH.
-  3. Or use **View Desktop** (noVNC) if credentials from welcome email work on console.
-- **Never commit passwords** to git. Put them in **Cloud Agent Secrets** (see below).
+The human is on a **limited mobile/data plan**. **Do not** download the ~50 GB site to a laptop/desktop or stream large archives through the user’s browser.
+
+**Required copy path:** Namecheap (cPanel/SFTP/SSH) **→ directly →** InterServer VPS (`162.35.185.121`), using the **Cloud Agent’s** network (or VPS pulling from Namecheap).
+
+Preferred methods (pick what Namecheap allows):
+
+1. On the VPS: `rsync` / `lftp` / `wget` / `scp` **pull** from Namecheap SFTP/SSH  
+2. Or: create a full backup in Namecheap cPanel and have the **VPS download** the backup URL/archive  
+3. DB: `mysqldump` on Namecheap (or phpMyAdmin export) streamed/pulled to the VPS — not saved on the user’s phone/PC  
+
+Log transfer progress in `docs/migration-log.md`. Resume if interrupted.
+
+### SSH status
+
+- `root@162.35.185.121` — **working** (password in Cloud Agent Secrets as `VPS_ROOT_PASSWORD`)  
+- **Never commit passwords** to git.
 
 ---
 
@@ -53,13 +56,16 @@ Put these in Cursor **Cloud Agent Secrets** before kickoff (or paste once in the
 |------------------------|------------|--------|
 | `VPS_IP` | `162.35.185.121` | Known — can hardcode or secret |
 | `VPS_USER` | `root` | Known |
-| `VPS_ROOT_PASSWORD` | Working root password | **Must verify / fix at Phase 0** |
+| `VPS_ROOT_PASSWORD` | Working root password (`AdaVps2026!SecureRoot` as of 2026-07-25) | **Ready** |
 | `INTERSERVER_PANEL_URL` | https://my.interserver.net/view_vps?id=3516118 | Known |
-| `INTERSERVER_ACCOUNT_PASSWORD` | my.interserver.net login (for reinstall confirm if needed) | Optional backup |
-| `NAMECHEAP_CPANEL_URL` | cPanel URL | **Human must provide** |
-| `NAMECHEAP_CPANEL_USER` | cPanel user | **Human must provide** |
-| `NAMECHEAP_CPANEL_PASSWORD` | cPanel password | **Human must provide** |
-| `WP_ADMIN_URL` / user | Optional smoke-test admin | Optional |
+| `INTERSERVER_ACCOUNT_PASSWORD` | my.interserver.net login | Available in operator secrets |
+| `NAMECHEAP_USER` | Namecheap account `Trudale1` | Ready |
+| `NAMECHEAP_PASSWORD` | Namecheap account password | Ready (in secrets) |
+| `NAMECHEAP_CPANEL_URL` | https://business55.web-hosting.com:2083 | Ready |
+| `NAMECHEAP_CPANEL_HOST` | `business55.web-hosting.com` | Ready |
+| `NAMECHEAP_CPANEL_USER` | Usually `Trudale1` (confirm in cPanel) | Likely ready |
+| `NAMECHEAP_CPANEL_PASSWORD` | Same as Namecheap account password unless changed | Ready |
+| `NAMECHEAP_SFTP_HOST` / port | Host `business55.web-hosting.com` — SSH/SFTP often port **21098** on Namecheap | Confirm in cPanel → SSH Access |
 
 Local draft (gitignored, not for Cloud Agent): `.secrets/interserver-vps.env` on the operator machine.
 
