@@ -75,3 +75,15 @@ Once any of the above is available, agent will (from VPS only):
 | 5 Pre-cutover checklist | Not started |
 | 6 DNS cutover | **Stopped — awaiting human approval later** |
 | 7 Post-cutover | Not started |
+
+---
+
+## 2026-07-25T03:19Z — Phase 2 retry after human “all is set”
+
+| Check | Result |
+|-------|--------|
+| cPanel `alldrnmk` + account password | Still `invalid_login` (401) |
+| SFTP `:21098` | Still `Permission denied` |
+| Namecheap account login `Trudale1` | Password OK → **Device Verification** again (`/twofa/device/`) — code emailed to `b*********n@g*******m` |
+
+**STOP.** Human verifying on their browser does not grant this Cloud Agent a session. Need a **fresh verification code pasted into chat** (10-minute window) so the agent can complete login, reset cPanel password if needed, and start VPS-side pull. No DNS changes. No transfer started.
