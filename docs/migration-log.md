@@ -200,3 +200,37 @@ Human reported staging links dead (site / shop / wp-login).
 
 ### DNS
 **Unchanged** (no Phase 6).
+
+---
+
+## 2026-07-26T00:24Z — Human PC timeout vs public reachability
+
+Human Windows PC: ping + `http://162.35.185.121/` **timeout**. Concern that prior 200s were localhost-only.
+
+### VPS / OS findings
+| Check | Result |
+|-------|--------|
+| nginx listen | **`0.0.0.0:80`** + `[::]:80` (not 127.0.0.1) |
+| server block | `listen 80 default_server;` `server_name _` |
+| UFW | allow **22**, **80/443**; no CSF/firewalld |
+| fail2ban | sshd only |
+| Local curl | 200 |
+
+### Real external probes (not localhost)
+| Source | Result |
+|--------|--------|
+| Cursor agent (AWS) | ping OK · HTTP **200** |
+| yougetsignal | Port **80 open** |
+| check-host HTTP | **200** (CA, CH, CY, IN, IR, SE, UA, SI, …) |
+| check-host TCP :80 | open (**US LA**, UK, JP, NL, DE, …) |
+| nginx access.log | AWS + other non-local IPs → 200 |
+
+**Conclusion:** Public IP **is** reachable on :80 worldwide. Human timeout is **client/ISP path** (no VPS access-log hits from that PC). Nothing misconfigured on listen/UFW for global access.
+
+### Workaround (no DNS change)
+Cloudflare quick tunnel `cf-tunnel`:  
+https://routing-authorization-louis-meals.trycloudflare.com  
+`wp-config` allows that Host so WP does not redirect back to the IP.
+
+### DNS
+**Unchanged**.
