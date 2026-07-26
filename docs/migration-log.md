@@ -168,3 +168,35 @@ Human: VPS is the live store target ASAP for adding products; heavy media can fo
 
 ### DNS
 **Unchanged** (no Phase 6).
+
+---
+
+## 2026-07-26T00:20Z — URGENT outage: HTTP 500 → fixed
+
+Human reported staging links dead (site / shop / wp-login).
+
+### Diagnosis
+| Check | Result |
+|-------|--------|
+| nginx / php8.3-fpm / mariadb | **active** |
+| UFW 80/443 | **allow** |
+| Web root `/var/www/alldrivesauto` | present; `index.php` OK |
+| MariaDB tables | still **120** in `alldrivesauto` |
+| External HTTP (before fix) | **500** on `/`, `/shop/`, `/wp-login.php` |
+| Root cause | Lean code `lftp` **overwrote `wp-config.php`** with Namecheap DB user `alldrnmk_adacom3216895956` → MariaDB **Access denied** |
+
+### Fix
+- Regenerated `/var/www/alldrivesauto/wp-config.php` for VPS DB `alldrivesauto` / `adawp` + `WP_HOME`/`WP_SITEURL` = `http://162.35.185.121`
+- Saved safe copy at `/root/migration/wp-config.vps.php`
+- Set **immutable** (`chattr +i`) on live `wp-config.php`
+- Updated `/root/migration/bin/phase-a-code.sh` to **exclude** `wp-config.php` and stop the explicit FTP `get` of it
+
+### HTTP after fix (external)
+| URL | Status |
+|-----|--------|
+| `http://162.35.185.121/` | **200** · title “All Drives Auto – Great Values. Always.” |
+| `http://162.35.185.121/shop/` | **200** |
+| `http://162.35.185.121/wp-login.php` | **200** |
+
+### DNS
+**Unchanged** (no Phase 6).
