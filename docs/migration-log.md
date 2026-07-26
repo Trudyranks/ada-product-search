@@ -137,3 +137,34 @@ Once any of the above is available, agent will (from VPS only):
 ### Transfer method
 - VPS-side `lftp` FTPS mirror using dedicated FTP account (not user PC)
 - Long-running under `tmux` session `pull-files`
+
+---
+
+## 2026-07-26T00:12Z — Phase A DONE (working VPS store); Phase B media started
+
+### Priority change
+Human: VPS is the live store target ASAP for adding products; heavy media can follow.
+
+### Phase A results
+| Item | Status |
+|------|--------|
+| Staging home | **http://162.35.185.121/** → **200**, title “All Drives Auto – Great Values. Always.” (WooCommerce) |
+| Shop | **http://162.35.185.121/shop/** → **200** |
+| WP login | **http://162.35.185.121/wp-login.php** → **200** (admin reachable after login) |
+| DB | Imported **120 tables** into MariaDB `alldrivesauto` / user `adawp` |
+| DB source | Existing dump dated **2026-01-28** (~190MB) — **not a fresh live dump** |
+| wp-config | Pointed at VPS DB; `WP_HOME`/`WP_SITEURL` = `http://162.35.185.121` |
+| Plugins | Deactivated `under-construction-page`; Elementor re-enabled; LiteSpeed cache already off |
+| Lean code pull | Still running / resumed (excludes uploads) via FTP `adapull@…` |
+
+### Blockers / notes for fresh DB
+- Namecheap **disk appears full** — FTP **uploads** fail at 0 bytes (`max-retries exceeded`), so PHP mysqldump-to-disk cannot land.
+- Namecheap web session expired (needs new device verification code for cPanel SSO / streamed `getsqlbackup`).
+- FTP **downloads** still work — media backfill OK.
+
+### Phase B
+- tmux `phase-b-uploads`: `lftp mirror --continue --only-newer` of `wp-content/uploads` with auto-retry loop.
+- Will not re-import old DB over newer VPS product work.
+
+### DNS
+**Unchanged** (no Phase 6).
